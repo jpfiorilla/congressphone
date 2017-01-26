@@ -51,27 +51,28 @@ function tweeted(err, reply) {
 const replyWithInfo = function(tweet){
     // Who is this in reply to?
     var reply_to = tweet.in_reply_to_screen_name;
-    // Who sent the tweet?
-    var name = tweet.user.screen_name;
-    // var name = 'gary';
-    // What is the text?
-    var txt = tweet.text;
-    // var txt = tweet;
-    console.log(txt);
-    // txt = txt.replace(/@callmyrep/g,'');
-    // console.log(txt);
-    var reply = '@'+name + ' ';
-    let official = findOfficialByName(txt);
-    if (official.length === 1){
-        official = official[0];
-        official.person.twitterid ? 
-        reply += 'contact @' + official.person.twitterid + ' at ' + official.phone :
-        reply += 'contact ' + official.person.name + ' at ' + official.phone;
-    } else {
-        reply += 'please be more specific with your query'
+    if (reply_to === 'callmyrep') {
+        // Who sent the tweet?
+        var name = tweet.user.screen_name;
+        // var name = 'gary';
+        // What is the text?
+        var txt = tweet.text;
+        // var txt = tweet;
+        console.log(txt);
+        // txt = txt.replace(/@callmyrep/g,'');
+        var reply = '@'+name + ' ';
+        let official = findOfficialByName(txt);
+        if (official.length === 1){
+            official = official[0];
+            official.person.twitterid ? 
+            reply += 'contact @' + official.person.twitterid + ' at ' + official.phone :
+            reply += 'contact ' + official.person.name + ' at ' + official.phone;
+        } else {
+            reply += 'please be more specific with your query'
+        }
+        // return reply;
+        T.post('statuses/update', { status: reply }, tweeted);
     }
-    // return reply;
-    T.post('statuses/update', { status: reply }, tweeted);
 }
 
 stream.on('tweet', replyWithInfo);
